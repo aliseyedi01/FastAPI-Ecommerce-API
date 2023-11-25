@@ -1,17 +1,23 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.models import Product
 from app.schemas.products import ProductOut, ProductsOut
-from typing import List
+from typing import List, Optional
 router = APIRouter(tags=["Products"], prefix="/products")
 
 
 # Get All Products
 @router.get("/", response_model=ProductsOut)
-def get_all_products(db: Session = Depends(get_db)):
-    products = db.query(Product).all()
-    return {"message": "List of products", "products": products}
+def get_all_products(
+    db: Session = Depends(get_db),
+    page: int = Query(1, ge=1, description="Page number"),
+    limit: int = Query(10, ge=1, le=100, description="Items per page"),
+    search: Optional[str] = "",
+):
+    products = db.query(Product).order_by(Product.id.asc()).filter(
+        Product.title.contains(search)).limit(limit).offset((page - 1) * limit).all()
+    return {"message": f"Page {page} with {limit} products", "products": products}
 
 
 # Get Product By ID
