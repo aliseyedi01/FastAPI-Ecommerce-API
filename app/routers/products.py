@@ -2,61 +2,58 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.models import Product
-
+from app.schemas.products import ProductOut, ProductsOut
+from typing import List
 router = APIRouter(tags=["Products"], prefix="/products")
 
 
 # Get All Products
-@router.get("/")
+@router.get("/", response_model=ProductsOut)
 def get_all_products(db: Session = Depends(get_db)):
     products = db.query(Product).all()
     return {"message": "List of products", "products": products}
 
 
 # Get Product By ID
-@router.get("/{product_id}")
+@router.get("/{product_id}", response_model=ProductOut)
 def get_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    return {"message": f"Details for Product {product_id}", "product": product}
+    return {"message": f"Details for product with id: {product_id}", "product": product}
 
 
 # Create New Product
-@router.post("/")
+@router.post("/", response_model=ProductOut)
 def create_product(product: dict, db: Session = Depends(get_db)):
     db_product = Product(**product)
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
-    return {"message": "Product created successfully", "product_id": db_product.id}
+    return {"message": "Product created successfully", "product": db_product}
 
 
 # Update Exist Product
-@router.put("/{product_id}")
+@router.put("/{product_id}", response_model=ProductOut)
 def update_product(product_id: int, updated_product: dict, db: Session = Depends(get_db)):
-    try:
-        db_product = db.query(Product).filter(Product.id == product_id).first()
-        if not db_product:
-            raise HTTPException(status_code=404, detail="Product not found")
+    db_product = db.query(Product).filter(Product.id == product_id).first()
+    if not db_product:
+        raise HTTPException(status_code=404, detail="Product not found")
 
-        for key, value in updated_product.items():
-            setattr(db_product, key, value)
+    for key, value in updated_product.items():
+        setattr(db_product, key, value)
 
-        db.commit()
-        db.refresh(db_product)
-        return {"message": f"Product {product_id} updated successfully", "updated_product": db_product.to_dict()}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+    db.commit()
+    db.refresh(db_product)
+    return {"message": f"Product {product_id} updated successfully", "product": db_product}
 
 
 # Delete Product By ID
-@router.delete("/{product_id}")
+@router.delete("/{product_id}", response_model=ProductOut)
 def delete_product(product_id: int, db: Session = Depends(get_db)):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
     db.delete(db_product)
     db.commit()
-    return {"message": f"Product {product_id} deleted successfully", "deleted_product": db_product.to_dict()}
+    return {"message": f"Product {product_id} deleted successfully", "product": db_product}
