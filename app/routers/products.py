@@ -42,7 +42,7 @@ def create_product(product: dict, db: Session = Depends(get_db)):
 
 
 # Update Exist Product
-@router.put("/{product_id}",, status_code=status.HTTP_200_OK, response_model=ProductOut)
+@router.put("/{product_id}", status_code=status.HTTP_200_OK, response_model=ProductOut)
 def update_product(product_id: int, updated_product: dict, db: Session = Depends(get_db)):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if not db_product:
