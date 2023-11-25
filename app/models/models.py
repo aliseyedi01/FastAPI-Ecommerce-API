@@ -23,3 +23,6 @@ class Product(Base):
     images = Column(ARRAY(String), nullable=False)
     is_published = Column(Boolean, server_default="True", nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
+
+    def to_dict(self) -> dict:
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}

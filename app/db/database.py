@@ -9,8 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Establish a connection to the PostgreSQL database
-# DATABASE_URL: Final = os.getenv("DATABASE_URL")
-DATABASE_URL: Final = "postgresql://postgres:oO7pHDbOSQqMkr9Z@db.iytnofgxeevxxrmznquq.supabase.co:5432/postgres"
+DATABASE_URL: Final = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 
 # Create database tables based on the defined SQLAlchemy models (subclasses of the Base class)

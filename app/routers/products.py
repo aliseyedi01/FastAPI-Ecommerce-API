@@ -6,12 +6,14 @@ from app.models.models import Product
 router = APIRouter(tags=["Products"], prefix="/products")
 
 
+# Get All Products
 @router.get("/")
 def get_all_products(db: Session = Depends(get_db)):
     products = db.query(Product).all()
     return {"message": "List of products", "products": products}
 
 
+# Get Product By ID
 @router.get("/{product_id}")
 def get_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
@@ -20,6 +22,8 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     return {"message": f"Details for Product {product_id}", "product": product}
 
 
+# Create New Product
+@router.post("/")
 def create_product(product: dict, db: Session = Depends(get_db)):
     db_product = Product(**product)
     db.add(db_product)
@@ -28,18 +32,26 @@ def create_product(product: dict, db: Session = Depends(get_db)):
     return {"message": "Product created successfully", "product_id": db_product.id}
 
 
+# Update Exist Product
 @router.put("/{product_id}")
 def update_product(product_id: int, updated_product: dict, db: Session = Depends(get_db)):
-    db_product = db.query(Product).filter(Product.id == product_id).first()
-    if not db_product:
-        raise HTTPException(status_code=404, detail="Product not found")
-    for key, value in updated_product.items():
-        setattr(db_product, key, value)
-    db.commit()
-    db.refresh(db_product)
-    return {"message": f"Product {product_id} updated successfully", "updated_product": db_product.dict()}
+    try:
+        db_product = db.query(Product).filter(Product.id == product_id).first()
+        if not db_product:
+            raise HTTPException(status_code=404, detail="Product not found")
+
+        for key, value in updated_product.items():
+            setattr(db_product, key, value)
+
+        db.commit()
+        db.refresh(db_product)
+        return {"message": f"Product {product_id} updated successfully", "updated_product": db_product.to_dict()}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
+# Delete Product By ID
 @router.delete("/{product_id}")
 def delete_product(product_id: int, db: Session = Depends(get_db)):
     db_product = db.query(Product).filter(Product.id == product_id).first()
@@ -47,4 +59,4 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Product not found")
     db.delete(db_product)
     db.commit()
-    return {"message": f"Product {product_id} deleted successfully", "deleted_product": db_product.dict()}
+    return {"message": f"Product {product_id} deleted successfully", "deleted_product": db_product.to_dict()}
