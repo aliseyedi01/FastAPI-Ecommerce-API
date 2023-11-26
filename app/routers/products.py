@@ -57,7 +57,7 @@ def update_product(product_id: int, updated_product: dict, db: Session = Depends
 
 
 # Delete Product By ID
-@router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=ProductOut)
+@router.delete("/{product_id}", status_code=status.HTTP_200_OK, response_model=ProductOut)
 def delete_product(product_id: int, db: Session = Depends(get_db)):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if not db_product:
