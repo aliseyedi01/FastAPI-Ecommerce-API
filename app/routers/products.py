@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends, Query, status
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.models.models import Product
-from app.schemas.products import ProductOut, ProductsOut
+from app.models.models import Product, Category
+from app.schemas.products import ProductOut, ProductsOut, ProductCreate
 from typing import List, Optional
 
 
@@ -33,12 +33,17 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
 
 # Create New Product
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=ProductOut)
-def create_product(product: dict, db: Session = Depends(get_db)):
-    db_product = Product(**product)
+def create_product(product: ProductCreate, db: Session = Depends(get_db)):
+    category_exists = db.query(Category).filter(Category.id == product.category_id).first()
+    if not category_exists:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found")
+
+    product_dict = product.model_dump()
+    db_product = Product(**product_dict)
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
-    return {"message": "Product created successfully", "product": db_product}
+    return {"message": "Product created successfully", "product": product}
 
 
 # Update Exist Product
