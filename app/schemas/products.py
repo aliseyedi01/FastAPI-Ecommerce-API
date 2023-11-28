@@ -2,16 +2,15 @@ from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel, Field
-from uuid import UUID
 
 
 class CategoryBase(BaseModel):
-    id: UUID
+    id: int
     name: str
 
 
 class ProductBase(BaseModel):
-    id: UUID
+    id: int
     title: str
     description: str
     price: int
@@ -24,6 +23,7 @@ class ProductBase(BaseModel):
     is_published: bool
     created_at: datetime
     category_id: int
+    category: CategoryBase
 
     class Config:
         orm_mode = True
@@ -45,7 +45,6 @@ class ProductCreate(BaseModel):
 
     class Config:
         orm_mode = True
-        # exclude = ['id']
 
 
 class ProductOut(BaseModel):
@@ -62,3 +61,11 @@ class ProductsOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ProductOutDelete(BaseModel):
+    message: str
+    product: ProductBase
+
+    class config:
+        fields = {'category': {'exclude': True}}

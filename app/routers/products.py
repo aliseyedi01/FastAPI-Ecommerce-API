@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query, status
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.models import Product, Category
-from app.schemas.products import ProductOut, ProductsOut, ProductCreate
+from app.schemas.products import ProductOut, ProductsOut, ProductCreate, ProductOutDelete
 from typing import List, Optional
 
 
@@ -43,7 +43,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
-    return {"message": "Product created successfully", "product": product}
+    return {"message": "Product created successfully", "product": db_product}
 
 
 # Update Exist Product
@@ -62,7 +62,7 @@ def update_product(product_id: int, updated_product: dict, db: Session = Depends
 
 
 # Delete Product By ID
-@router.delete("/{product_id}", status_code=status.HTTP_200_OK, response_model=ProductOut)
+@router.delete("/{product_id}", status_code=status.HTTP_200_OK, response_model=ProductOutDelete)
 def delete_product(product_id: int, db: Session = Depends(get_db)):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if not db_product:

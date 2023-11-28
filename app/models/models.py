@@ -12,7 +12,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
@@ -27,8 +27,8 @@ class User(Base):
 class Order(Base):
     __tablename__ = "orders"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     order_date = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
     total_amount = Column(Integer, nullable=False)
 
@@ -42,9 +42,9 @@ class Order(Base):
 class OrderItem(Base):
     __tablename__ = "order_items"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
-    order_id = Column(UUID(as_uuid=True), ForeignKey("orders.id"), nullable=False)
-    product_id = Column(UUID(as_uuid=True), ForeignKey("products.id"), nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    order_id = Column(Integer, ForeignKey("orders.id", ondelete="CASCADE"), nullable=False)
+    product_id = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
     quantity = Column(Integer, nullable=False)
     subtotal = Column(Integer, nullable=False)
 
@@ -56,7 +56,7 @@ class OrderItem(Base):
 class Category(Base):
     __tablename__ = "categories"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     name = Column(String, unique=True, nullable=False)
 
     # Relationship with products
@@ -66,7 +66,7 @@ class Category(Base):
 class Product(Base):
     __tablename__ = "products"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
@@ -80,7 +80,7 @@ class Product(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
 
     # Relationship with category
-    category_id = Column(UUID(as_uuid=True), ForeignKey("categories.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
     category = relationship("Category", back_populates="products")
 
     # Relationship with order items
