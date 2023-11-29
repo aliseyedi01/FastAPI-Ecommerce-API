@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -9,10 +9,14 @@ class CategoryBase(BaseModel):
     name: str
 
 
+class BaseConfig:
+    orm_mode = True
+
+
 class ProductBase(BaseModel):
     id: int
     title: str
-    description: str
+    description: Optional[str]
     price: int
     discount_percentage: float
     rating: float
@@ -25,13 +29,13 @@ class ProductBase(BaseModel):
     category_id: int
     category: CategoryBase
 
-    class Config:
-        orm_mode = True
+    class Config(BaseConfig):
+        pass
 
 
 class ProductCreate(BaseModel):
     title: str
-    description: str
+    description: Optional[str]
     price: int
     discount_percentage: float
     rating: float
@@ -43,8 +47,8 @@ class ProductCreate(BaseModel):
     created_at: datetime
     category_id: int
 
-    class Config:
-        orm_mode = True
+    class Config(BaseConfig):
+        pass
 
 
 class ProductOut(BaseModel):
@@ -59,13 +63,26 @@ class ProductsOut(BaseModel):
     message: str
     products: List[ProductBase]
 
-    class Config:
-        orm_mode = True
+    class Config(BaseConfig):
+        pass
+
+
+class ProductDelete(BaseModel):
+    id: int
+    title: str
+    description: str
+    price: int
+    discount_percentage: float
+    rating: float
+    stock: int
+    brand: str
+    thumbnail: str
+    images: List[str]
+    is_published: bool
+    created_at: datetime
+    category_id: int
 
 
 class ProductOutDelete(BaseModel):
     message: str
-    product: ProductBase
-
-    class config:
-        fields = {'category': {'exclude': True}}
+    product: ProductDelete
