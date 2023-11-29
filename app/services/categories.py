@@ -33,7 +33,7 @@ class CategoryService:
         if not db_category:
             ResponseHandler.not_found_error("Category", category_id)
 
-        for key, value in updated_category.items():
+        for key, value in updated_category.model_dump().items():
             setattr(db_category, key, value)
 
         db.commit()
