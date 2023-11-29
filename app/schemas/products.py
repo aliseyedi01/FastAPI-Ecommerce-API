@@ -53,7 +53,7 @@ class ProductCreate(BaseModel):
 
 class ProductOut(BaseModel):
     message: str
-    product: ProductBase
+    data: ProductBase
 
     class Config:
         orm_mode = True
@@ -61,7 +61,7 @@ class ProductOut(BaseModel):
 
 class ProductsOut(BaseModel):
     message: str
-    products: List[ProductBase]
+    data: List[ProductBase]
 
     class Config(BaseConfig):
         pass
@@ -85,4 +85,4 @@ class ProductDelete(BaseModel):
 
 class ProductOutDelete(BaseModel):
     message: str
-    product: ProductDelete
+    data: ProductDelete
