@@ -3,7 +3,7 @@ from app.db.database import get_db
 from app.services.products import ProductService
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from app.schemas.products import ProductCreate, ProductOut, ProductsOut, ProductOutDelete
+from app.schemas.products import ProductCreate, ProductOut, ProductsOut, ProductOutDelete, ProductUpdate
 
 router = APIRouter(tags=["Products"], prefix="/products")
 
@@ -33,7 +33,7 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
 
 # Update Exist Product
 @router.put("/{product_id}", status_code=status.HTTP_200_OK, response_model=ProductOut)
-def update_product(product_id: int, updated_product: dict, db: Session = Depends(get_db)):
+def update_product(product_id: int, updated_product: ProductUpdate, db: Session = Depends(get_db)):
     return ProductService.update_product(db, product_id, updated_product)
 
 

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from app.models.models import Product, Category
-from app.schemas.products import ProductCreate
+from app.schemas.products import ProductCreate, ProductUpdate
 
 
 class ResponseHandler:
@@ -63,12 +63,12 @@ class ProductService:
         return ResponseHandler.create_success(db_product.title, db_product.id, db_product)
 
     @staticmethod
-    def update_product(db: Session, product_id: int, updated_product: dict):
+    def update_product(db: Session, product_id: int, updated_product: ProductUpdate):
         db_product = db.query(Product).filter(Product.id == product_id).first()
         if not db_product:
             ResponseHandler.not_found_error("Product", product_id)
 
-        for key, value in updated_product.items():
+        for key, value in updated_product.model_dump().items():
             setattr(db_product, key, value)
 
         db.commit()

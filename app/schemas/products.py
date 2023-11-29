@@ -51,6 +51,10 @@ class ProductCreate(BaseModel):
         pass
 
 
+class ProductUpdate(ProductCreate):
+    pass
+
+
 class ProductOut(BaseModel):
     message: str
     data: ProductBase
