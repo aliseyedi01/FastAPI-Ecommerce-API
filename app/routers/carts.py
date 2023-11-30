@@ -3,7 +3,7 @@ from app.db.database import get_db
 from app.services.carts import CartService
 from sqlalchemy.orm import Session
 from typing import List
-from app.schemas.carts import CartCreate, CartUpdate, CartOut, CartOutDelete, CartsOutList
+from app.schemas.carts import CartCreate, CartUpdate, CartOut, CartOutDelete, CartsOutList, CartsUserOutList
 
 router = APIRouter(tags=["Carts"], prefix="/carts")
 
@@ -19,6 +19,15 @@ def get_all_carts(
     return CartService.get_all_carts(db, page, limit, search)
 
 
+# Get All Carts for user
+@router.get("/user/{user_id}", status_code=status.HTTP_200_OK, response_model=CartsUserOutList)
+def get_all_user_carts(
+    user_id: int,
+    db: Session = Depends(get_db),
+):
+    return CartService.get_all_user_carts(db, user_id)
+
+
 # Get Cart By User ID
 @router.get("/{cart_id}", status_code=status.HTTP_200_OK, response_model=CartsOutList)
 def get_cart(cart_id: int, db: Session = Depends(get_db)):
@@ -26,7 +35,7 @@ def get_cart(cart_id: int, db: Session = Depends(get_db)):
 
 
 # Create New Cart
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=CartOut)
+@router.post("/user/", status_code=status.HTTP_201_CREATED, response_model=CartOut)
 def create_cart(cart: CartCreate, db: Session = Depends(get_db)):
     return CartService.create_cart(db, cart)
 

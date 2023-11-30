@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from app.models.models import Cart, CartItem
-from app.schemas.carts import CartUpdate, CartBase
+from app.models.models import Cart, CartItem, Product
+from app.schemas.carts import CartUpdate, CartBase, CartCreate
 from app.services.products import ResponseHandler
 from typing import List
 
@@ -13,6 +13,12 @@ class CartService:
         return ResponseHandler.success(message, carts)
 
     @staticmethod
+    def get_all_user_carts(db: Session, user_id: int):
+        carts = db.query(Cart).filter(Cart.user_id == user_id).all()
+        message = f"All carts for user with ID {user_id}"
+        return ResponseHandler.success(message, carts)
+
+    @staticmethod
     def get_cart(db: Session, cart_id: int):
         cart = db.query(Cart).filter(Cart.id == cart_id).first()
         if not cart:
@@ -21,14 +27,28 @@ class CartService:
         return ResponseHandler.get_single_success("cart", cart_id, cart)
 
     @staticmethod
-    def create_cart(db: Session, cart: CartBase):
+    def create_cart(db: Session, cart: CartCreate):
         cart_dict = cart.dict()
 
-        cart_items_data = cart_dict.pop("cart_items", [])
-        cart_items = [CartItem(**item) for item in cart_items_data]
-
         cart_dict.pop("id", None)
-        cart_db = Cart(**cart_dict, cart_items=cart_items)
+
+        cart_items_data = cart_dict.pop("cart_items", [])
+        cart_items = []
+        total_amount = 0
+        for item_data in cart_items_data:
+            product_id = item_data['product_id']
+            quantity = item_data['quantity']
+
+            product = db.query(Product).filter(Product.id == product_id).first()
+            if not product:
+                return ResponseHandler.not_found_error("Product", product_id)
+
+            subtotal = quantity * product.price
+            cart_item = CartItem(product_id=product_id, quantity=quantity, subtotal=subtotal)
+            total_amount += subtotal
+
+            cart_items.append(cart_item)
+        cart_db = Cart(cart_items=cart_items, total_amount=total_amount, **cart_dict)
 
         db.add(cart_db)
         db.commit()
