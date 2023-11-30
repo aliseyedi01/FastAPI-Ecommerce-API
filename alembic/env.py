@@ -6,7 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.db.database import Base
-from app.models.models import Product
+from app.models.models import Product, Cart, CartItem, Category, User
 
 config = context.config
 

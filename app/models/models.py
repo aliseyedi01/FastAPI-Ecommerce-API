@@ -4,9 +4,8 @@ from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
+from app.db.database import Base
 from uuid import uuid4
-
-Base = declarative_base()
 
 
 class User(Base):
@@ -30,7 +29,7 @@ class Cart(Base):
     id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
-    total_amount = Column(Integer, nullable=False)
+    total_amount = Column(Float, nullable=False)
 
     # Relationship with user
     user = relationship("User", back_populates="carts")
@@ -46,7 +45,7 @@ class CartItem(Base):
     cart_id = Column(Integer, ForeignKey("carts.id", ondelete="CASCADE"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
     quantity = Column(Integer, nullable=False)
-    subtotal = Column(Integer, nullable=False)
+    subtotal = Column(Float, nullable=False)
 
     # Relationship with cart and product
     cart = relationship("Cart", back_populates="cart_items")

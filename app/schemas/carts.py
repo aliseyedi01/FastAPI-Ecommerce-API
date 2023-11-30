@@ -32,7 +32,7 @@ class CartItemBase(BaseModel):
     id: int
     product_id: int
     quantity: int
-    subtotal: int
+    subtotal: float
     product: ProductBase
 
 
@@ -40,7 +40,7 @@ class CartBase(BaseModel):
     id: int
     user_id: int
     created_at: datetime
-    total_amount: int
+    total_amount: float
     cart_items: List[CartItemBase]
 
     class Config(BaseConfig):
@@ -51,7 +51,7 @@ class CartOutBase(BaseModel):
     id: int
     user_id: int
     created_at: datetime
-    total_amount: int
+    total_amount: float
     cart_items: List[CartItemBase]
 
     class Config(BaseConfig):
