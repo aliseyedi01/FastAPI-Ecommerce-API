@@ -28,9 +28,7 @@ class CartService:
 
     @staticmethod
     def create_cart(db: Session, cart: CartCreate):
-        cart_dict = cart.dict()
-
-        cart_dict.pop("id", None)
+        cart_dict = cart.model_dump()
 
         cart_items_data = cart_dict.pop("cart_items", [])
         cart_items = []
@@ -43,7 +41,7 @@ class CartService:
             if not product:
                 return ResponseHandler.not_found_error("Product", product_id)
 
-            subtotal = quantity * product.price
+            subtotal = quantity * product.price * (product.discount_percentage / 100)
             cart_item = CartItem(product_id=product_id, quantity=quantity, subtotal=subtotal)
             total_amount += subtotal
 
@@ -60,8 +58,6 @@ class CartService:
         cart = db.query(Cart).filter(Cart.id == cart_id).first()
         if not cart:
             return ResponseHandler.not_found_error("Cart", cart_id)
-
-        print("cart before update :", cart)
 
         cart.items = [CartItem(**item.model_dump()) for item in updated_cart.items]
         db.commit()

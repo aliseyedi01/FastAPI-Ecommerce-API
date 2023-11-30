@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 
 
@@ -8,12 +8,32 @@ class BaseConfig:
     orm_mode = True
 
 
+class ProductBase(BaseModel):
+    id: int
+    title: str
+    description: Optional[str]
+    price: int
+    discount_percentage: float
+    rating: float
+    stock: int
+    brand: str
+    thumbnail: str
+    images: List[str]
+    is_published: bool
+    created_at: datetime
+    category_id: int
+
+    class Config(BaseConfig):
+        pass
+
+
 # Base Cart & Cart_Item
 class CartItemBase(BaseModel):
     id: int
     product_id: int
     quantity: int
     subtotal: int
+    product: ProductBase
 
 
 class CartBase(BaseModel):
@@ -56,9 +76,11 @@ class CartsUserOutList(BaseModel):
     message: str
     data: List[CartBase]
 
+    class Config(BaseConfig):
+        pass
+
+
 # Delete Cart
-
-
 class CartOutDelete(BaseModel):
     message: str
     data: CartOutBase
