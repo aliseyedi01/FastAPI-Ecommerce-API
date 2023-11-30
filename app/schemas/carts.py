@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional
 from datetime import datetime
+from app.schemas.products import ProductBase, CategoryBase
 
 
 # Base Config
@@ -8,20 +9,8 @@ class BaseConfig:
     orm_mode = True
 
 
-class ProductBase(BaseModel):
-    id: int
-    title: str
-    description: Optional[str]
-    price: int
-    discount_percentage: float
-    rating: float
-    stock: int
-    brand: str
-    thumbnail: str
-    images: List[str]
-    is_published: bool
-    created_at: datetime
-    category_id: int
+class ProductBase(ProductBase):
+    category: CategoryBase = Field(exclude=True)
 
     class Config(BaseConfig):
         pass

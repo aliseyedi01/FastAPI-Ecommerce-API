@@ -33,19 +33,9 @@ class ProductBase(BaseModel):
         pass
 
 
-class ProductCreate(BaseModel):
-    title: str
-    description: Optional[str]
-    price: int
-    discount_percentage: float
-    rating: float
-    stock: int
-    brand: str
-    thumbnail: str
-    images: List[str]
-    is_published: bool
-    created_at: datetime
-    category_id: int
+class ProductCreate(ProductBase):
+    id: int = Field(exclude=True)
+    category: CategoryBase = Field(exclude=True)
 
     class Config(BaseConfig):
         pass
@@ -59,8 +49,8 @@ class ProductOut(BaseModel):
     message: str
     data: ProductBase
 
-    class Config:
-        orm_mode = True
+    class Config(BaseConfig):
+        pass
 
 
 class ProductsOut(BaseModel):
@@ -71,20 +61,8 @@ class ProductsOut(BaseModel):
         pass
 
 
-class ProductDelete(BaseModel):
-    id: int
-    title: str
-    description: str
-    price: int
-    discount_percentage: float
-    rating: float
-    stock: int
-    brand: str
-    thumbnail: str
-    images: List[str]
-    is_published: bool
-    created_at: datetime
-    category_id: int
+class ProductDelete(ProductBase):
+    category: CategoryBase = Field(exclude=True)
 
 
 class ProductOutDelete(BaseModel):
