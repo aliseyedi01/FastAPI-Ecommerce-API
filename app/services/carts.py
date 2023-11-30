@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.models import Cart, CartItem, Product
 from app.schemas.carts import CartUpdate, CartBase, CartCreate
-from app.services.products import ResponseHandler
+from app.utils.responses import ResponseHandler
 from typing import List
 
 
