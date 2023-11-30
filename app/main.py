@@ -1,4 +1,4 @@
-from app.routers import products, categories
+from app.routers import products, categories, carts
 from fastapi import FastAPI
 app = FastAPI()
 
@@ -10,3 +10,4 @@ def read_root():
 
 app.include_router(products.router)
 app.include_router(categories.router)
+app.include_router(carts.router)

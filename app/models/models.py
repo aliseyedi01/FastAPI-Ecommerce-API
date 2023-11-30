@@ -20,37 +20,37 @@ class User(Base):
     is_active = Column(Boolean, server_default="True", nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
 
-    # Relationship with orders
-    orders = relationship("Order", back_populates="user")
+    # Relationship with carts
+    carts = relationship("Cart", back_populates="user")
 
 
-class Order(Base):
-    __tablename__ = "orders"
+class Cart(Base):
+    __tablename__ = "carts"
 
     id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    order_date = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
     total_amount = Column(Integer, nullable=False)
 
     # Relationship with user
-    user = relationship("User", back_populates="orders")
+    user = relationship("User", back_populates="carts")
 
-    # Relationship with products
-    order_items = relationship("OrderItem", back_populates="order")
+    # Relationship with cart items
+    cart_items = relationship("CartItem", back_populates="cart")
 
 
-class OrderItem(Base):
-    __tablename__ = "order_items"
+class CartItem(Base):
+    __tablename__ = "cart_items"
 
     id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
-    order_id = Column(Integer, ForeignKey("orders.id", ondelete="CASCADE"), nullable=False)
+    cart_id = Column(Integer, ForeignKey("carts.id", ondelete="CASCADE"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
     quantity = Column(Integer, nullable=False)
     subtotal = Column(Integer, nullable=False)
 
-    # Relationship with order and product
-    order = relationship("Order", back_populates="order_items")
-    product = relationship("Product", back_populates="order_items")
+    # Relationship with cart and product
+    cart = relationship("Cart", back_populates="cart_items")
+    product = relationship("Product", back_populates="cart_items")
 
 
 class Category(Base):
@@ -83,5 +83,5 @@ class Product(Base):
     category_id = Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
     category = relationship("Category", back_populates="products")
 
-    # Relationship with order items
-    order_items = relationship("OrderItem", back_populates="product")
+    # Relationship with cart items
+    cart_items = relationship("CartItem", back_populates="product")
