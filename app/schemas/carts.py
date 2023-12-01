@@ -9,7 +9,7 @@ class BaseConfig:
     orm_mode = True
 
 
-class ProductBase(ProductBase):
+class ProductBaseCart(ProductBase):
     category: CategoryBase = Field(exclude=True)
 
     class Config(BaseConfig):
@@ -22,7 +22,7 @@ class CartItemBase(BaseModel):
     product_id: int
     quantity: int
     subtotal: float
-    product: ProductBase
+    product: ProductBaseCart
 
 
 class CartBase(BaseModel):

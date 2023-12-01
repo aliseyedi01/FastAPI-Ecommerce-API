@@ -3,6 +3,7 @@ from app.models.models import Cart, CartItem, Product
 from app.schemas.carts import CartUpdate, CartBase, CartCreate
 from app.utils.responses import ResponseHandler
 from typing import List
+from sqlalchemy.orm import joinedload
 
 
 class CartService:
@@ -23,7 +24,6 @@ class CartService:
         cart = db.query(Cart).filter(Cart.id == cart_id).first()
         if not cart:
             ResponseHandler.not_found_error("Cart", cart_id)
-
         return ResponseHandler.get_single_success("cart", cart_id, cart)
 
     @staticmethod
@@ -66,7 +66,13 @@ class CartService:
 
     @staticmethod
     def delete_cart(db: Session, cart_id: int):
-        cart = db.query(Cart).filter(Cart.id == cart_id).first()
+        # cart = db.query(Cart).filter(Cart.id == cart_id).first()
+        cart = (
+            db.query(Cart)
+            .options(joinedload(Cart.cart_items).joinedload(CartItem.product))
+            .filter(Cart.id == cart_id)
+            .first()
+        )
         if not cart:
             ResponseHandler.not_found_error("Cart", cart_id)
 

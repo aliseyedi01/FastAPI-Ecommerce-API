@@ -29,7 +29,7 @@ def get_all_user_carts(
 
 
 # Get Cart By User ID
-@router.get("/{cart_id}", status_code=status.HTTP_200_OK, response_model=CartsOutList)
+@router.get("/{cart_id}", status_code=status.HTTP_200_OK, response_model=CartOut)
 def get_cart(cart_id: int, db: Session = Depends(get_db)):
     return CartService.get_cart(db, cart_id)
 
