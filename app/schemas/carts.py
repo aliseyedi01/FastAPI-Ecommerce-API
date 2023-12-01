@@ -90,6 +90,5 @@ class CartCreate(BaseModel):
 
 
 # Update Cart
-class CartUpdate(BaseModel):
-    user_id: int
-    items: List[CartItemBase]
+class CartUpdate(CartCreate):
+    pass

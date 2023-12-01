@@ -7,18 +7,21 @@ from sqlalchemy.orm import joinedload
 
 
 class CartService:
+    # Get All Carts
     @staticmethod
     def get_all_carts(db: Session, page: int, limit: int, search: str = ""):
         carts = db.query(Cart).offset((page - 1) * limit).limit(limit).all()
         message = f"Page {page} with {limit} carts"
         return ResponseHandler.success(message, carts)
 
+    # Get All Cart of User
     @staticmethod
     def get_all_user_carts(db: Session, user_id: int):
         carts = db.query(Cart).filter(Cart.user_id == user_id).all()
         message = f"All carts for user with ID {user_id}"
         return ResponseHandler.success(message, carts)
 
+    # Get A Cart By ID
     @staticmethod
     def get_cart(db: Session, cart_id: int):
         cart = db.query(Cart).filter(Cart.id == cart_id).first()
@@ -26,6 +29,7 @@ class CartService:
             ResponseHandler.not_found_error("Cart", cart_id)
         return ResponseHandler.get_single_success("cart", cart_id, cart)
 
+    # Create a new Cart
     @staticmethod
     def create_cart(db: Session, cart: CartCreate):
         cart_dict = cart.model_dump()
@@ -53,20 +57,43 @@ class CartService:
         db.refresh(cart_db)
         return ResponseHandler.create_success("Cart", cart_db.id, cart_db)
 
+    # Update Cart & CartItem
     @staticmethod
     def update_cart(db: Session, cart_id: int, updated_cart: CartUpdate):
         cart = db.query(Cart).filter(Cart.id == cart_id).first()
         if not cart:
             return ResponseHandler.not_found_error("Cart", cart_id)
 
-        cart.items = [CartItem(**item.model_dump()) for item in updated_cart.items]
+        # Delete existing cart_items
+        db.query(CartItem).filter(CartItem.cart_id == cart_id).delete()
+
+        for item in updated_cart.cart_items:
+            product_id = item.product_id
+            quantity = item.quantity
+
+            product = db.query(Product).filter(Product.id == product_id).first()
+            if not product:
+                return ResponseHandler.not_found_error("Product", product_id)
+
+            subtotal = quantity * product.price * (product.discount_percentage / 100)
+
+            cart_item = CartItem(
+                cart_id=cart_id,
+                product_id=product_id,
+                quantity=quantity,
+                subtotal=subtotal
+            )
+            db.add(cart_item)
+
+        cart.total_amount = sum(item.subtotal for item in cart.cart_items)
+
         db.commit()
         db.refresh(cart)
         return ResponseHandler.update_success("cart", cart.id, cart)
 
+    # Delete Both Cart and CartItems
     @staticmethod
     def delete_cart(db: Session, cart_id: int):
-        # cart = db.query(Cart).filter(Cart.id == cart_id).first()
         cart = (
             db.query(Cart)
             .options(joinedload(Cart.cart_items).joinedload(CartItem.product))
