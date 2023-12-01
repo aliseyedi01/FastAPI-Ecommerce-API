@@ -25,7 +25,7 @@ class ProductService:
         if not category_exists:
             ResponseHandler.not_found_error("Category", product.category_id)
 
-        product_dict = product.dict()
+        product_dict = product.model_dump()
         db_product = Product(**product_dict)
         db.add(db_product)
         db.commit()

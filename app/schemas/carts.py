@@ -1,12 +1,12 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List
 from datetime import datetime
 from app.schemas.products import ProductBase, CategoryBase
 
 
 # Base Config
 class BaseConfig:
-    orm_mode = True
+    from_attributes = True
 
 
 class ProductBaseCart(ProductBase):
