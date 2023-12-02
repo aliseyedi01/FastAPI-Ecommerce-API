@@ -14,7 +14,7 @@ def get_all_users(
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(10, ge=1, le=100, description="Items per page"),
-    search: Optional[str] = "",
+    search: Optional[str] = Query("", description="Search based username"),
     role: str = Query("user", enum=["user", "admin"])
 ):
     return UserService.get_all_users(db, page, limit, search, role)
