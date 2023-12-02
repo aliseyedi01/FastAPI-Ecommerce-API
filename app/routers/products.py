@@ -14,7 +14,7 @@ def get_all_products(
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(10, ge=1, le=100, description="Items per page"),
-    search: Optional[str] = "",
+    search: str | None = Query("", description="Search based title of products"),
 ):
     return ProductService.get_all_products(db, page, limit, search)
 
