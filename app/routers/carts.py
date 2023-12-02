@@ -14,9 +14,8 @@ def get_all_carts(
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(10, ge=1, le=100, description="Items per page"),
-    search: str = "",
 ):
-    return CartService.get_all_carts(db, page, limit, search)
+    return CartService.get_all_carts(db, page, limit)
 
 
 # Get All Carts for user
