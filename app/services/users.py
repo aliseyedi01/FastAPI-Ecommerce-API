@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.models import User
 from app.schemas.users import UserCreate, UserUpdate
 from app.utils.responses import ResponseHandler
+from app.core.security import get_password_hash
 
 
 class UserService:
@@ -21,8 +22,9 @@ class UserService:
 
     @staticmethod
     def create_user(db: Session, user: UserCreate):
-        user_dict = user.model_dump()
-        db_user = User(id=None, **user_dict)
+        hashed_password = get_password_hash(user.password)
+        user.password = hashed_password
+        db_user = User(id=None, **user.model_dump())
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
