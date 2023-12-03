@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel , EmailStr
 from typing import List
 from datetime import datetime
 from app.schemas.carts import CartBase
@@ -11,7 +11,7 @@ class BaseConfig:
 class UserBase(BaseModel):
     id: int
     username: str
-    email: str
+    email: EmailStr
     full_name: str
     password: str
     role: str
