@@ -2,10 +2,7 @@ from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Float, ARRA
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import declarative_base
 from app.db.database import Base
-from uuid import uuid4
 
 
 class User(Base):

@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, Query, status
 from app.db.database import get_db
 from app.services.carts import CartService
 from sqlalchemy.orm import Session
-from typing import List
 from app.schemas.carts import CartCreate, CartUpdate, CartOut, CartOutDelete, CartsOutList, CartsUserOutList
 
 router = APIRouter(tags=["Carts"], prefix="/carts")

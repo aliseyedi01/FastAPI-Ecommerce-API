@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, Query, status
 from app.db.database import get_db
 from app.services.users import UserService
 from sqlalchemy.orm import Session
-from typing import List
 from app.schemas.users import UserCreate, UserOut, UsersOut, UserOutDelete, UserUpdate
 
 router = APIRouter(tags=["Users"], prefix="/users")

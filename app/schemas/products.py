@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, validator
 from datetime import datetime
 from typing import List, Optional, ClassVar
 from app.schemas.categories import CategoryBase

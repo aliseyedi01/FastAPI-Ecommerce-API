@@ -1,4 +1,3 @@
-# routers.py
 from fastapi import APIRouter, Depends, status, Header
 from sqlalchemy.orm import Session
 from app.services.auth import login, get_refresh_token

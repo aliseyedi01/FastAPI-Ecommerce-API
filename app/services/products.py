@@ -1,4 +1,3 @@
-from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from app.models.models import Product, Category
 from app.schemas.products import ProductCreate, ProductUpdate

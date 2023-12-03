@@ -4,7 +4,7 @@ from app.core.config import settings
 from jose import JWTError, jwt
 from app.schemas.auth import TokenResponse
 from fastapi.encoders import jsonable_encoder
-from fastapi import HTTPException, Depends, status
+from fastapi import Depends
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
