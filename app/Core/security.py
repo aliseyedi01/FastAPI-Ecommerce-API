@@ -4,6 +4,7 @@ from app.core.config import settings
 from jose import JWTError, jwt
 from app.schemas.auth import TokenResponse
 from fastapi.encoders import jsonable_encoder
+from fastapi import HTTPException, Depends, status
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -43,4 +44,11 @@ async def create_access_token(data: dict, access_token_expiry=None):
 
 
 async def create_refresh_token(data):
-    return jwt.encode(data, settings.secret_key, algorithm=settings.algorithm)
+    return jwt.encode(data, settings.secret_key, settings.algorithm)
+
+
+def get_token_payload(token, credentials_exception):
+    try:
+        return jwt.decode(token, settings.secret_key, [settings.algorithm])
+    except JWTError:
+        raise credentials_exception
