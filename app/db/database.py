@@ -3,14 +3,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from typing import Generator
 from typing import Final
-import os
-from dotenv import load_dotenv
+from app.core.config import settings
 
-load_dotenv()
 
 # Establish a connection to the PostgreSQL database
-DATABASE_URL: Final = os.getenv("DATABASE_URL")
-engine = create_engine(DATABASE_URL)
+engine = create_engine(settings.database_url)
 
 # Create database tables based on the defined SQLAlchemy models (subclasses of the Base class)
 Base = declarative_base()
