@@ -3,6 +3,7 @@ from app.db.database import get_db
 from app.services.carts import CartService
 from sqlalchemy.orm import Session
 from app.schemas.carts import CartCreate, CartUpdate, CartOut, CartOutDelete, CartsOutList, CartsUserOutList
+from app.core.security import get_current_user
 
 router = APIRouter(tags=["Carts"], prefix="/carts")
 
@@ -13,8 +14,9 @@ def get_all_carts(
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(10, ge=1, le=100, description="Items per page"),
+    current_user: dict = Depends(get_current_user),
 ):
-    return CartService.get_all_carts(db, page, limit)
+    return CartService.get_all_carts(current_user, db, page, limit)
 
 
 # Get All Carts for user

@@ -4,19 +4,25 @@ from app.core.config import settings
 from jose import JWTError, jwt
 from app.schemas.auth import TokenResponse
 from fastapi.encoders import jsonable_encoder
-from fastapi import Depends
+from fastapi import HTTPException, Depends, status
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                      detail="Invalid access token.", headers={"WWW-Authenticate": "Bearer"})
 
+
+# Create Hash Password
 def get_password_hash(password):
     return pwd_context.hash(password)
 
 
+# Verify Hash Password
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
+# Create Access & Refresh Token
 async def get_user_token(id: int, refresh_token=None):
     payload = {"id": id}
 
@@ -34,6 +40,7 @@ async def get_user_token(id: int, refresh_token=None):
     )
 
 
+# Create Access Token
 async def create_access_token(data: dict, access_token_expiry=None):
     payload = data.copy()
 
@@ -43,12 +50,18 @@ async def create_access_token(data: dict, access_token_expiry=None):
     return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
 
 
+# Create Refresh Token
 async def create_refresh_token(data):
     return jwt.encode(data, settings.secret_key, settings.algorithm)
 
 
-def get_token_payload(token, credentials_exception):
+# Get Payload Of Token
+def get_token_payload(token):
     try:
         return jwt.decode(token, settings.secret_key, [settings.algorithm])
     except JWTError:
         raise credentials_exception
+
+
+def get_current_user(token):
+    return get_token_payload(token)

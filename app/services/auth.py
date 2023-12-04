@@ -23,7 +23,7 @@ async def get_refresh_token(token, db):
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                           detail="Invalid refresh token.", headers={"WWW-Authenticate": "Bearer"})
 
-    payload = get_token_payload(token, credentials_exception)
+    payload = get_token_payload(token)
     user_id = payload.get('id', None)
     if not user_id:
         raise credentials_exception

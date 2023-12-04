@@ -8,8 +8,9 @@ from sqlalchemy.orm import joinedload
 class CartService:
     # Get All Carts
     @staticmethod
-    def get_all_carts(db: Session, page: int, limit: int):
-        carts = db.query(Cart).offset((page - 1) * limit).limit(limit).all()
+    def get_all_carts(current_user, db: Session, page: int, limit: int):
+        user_id = current_user.get('id')
+        carts = db.query(Cart).filter(Cart.user_id == user_id).offset((page - 1) * limit).limit(limit).all()
         message = f"Page {page} with {limit} carts"
         return ResponseHandler.success(message, carts)
 
