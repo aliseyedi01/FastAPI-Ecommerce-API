@@ -4,7 +4,9 @@ from sqlalchemy.orm import Session
 from app.models.models import User
 from app.db.database import get_db
 from app.core.security import verify_password, get_user_token, get_token_payload
-
+from app.core.security import get_password_hash
+from app.utils.responses import ResponseHandler
+from app.schemas.auth import UserCreate
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
@@ -17,6 +19,16 @@ async def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Ses
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
 
     return await get_user_token(id=user.id)
+
+
+async def signup(db: Session, user: UserCreate):
+    hashed_password = get_password_hash(user.password)
+    user.password = hashed_password
+    db_user = User(id=None, **user.model_dump())
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return ResponseHandler.create_success(db_user.username, db_user.id, db_user)
 
 
 async def get_refresh_token(token, db):
