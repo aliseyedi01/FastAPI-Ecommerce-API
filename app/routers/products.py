@@ -3,14 +3,10 @@ from app.db.database import get_db
 from app.services.products import ProductService
 from sqlalchemy.orm import Session
 from app.schemas.products import ProductCreate, ProductOut, ProductsOut, ProductOutDelete, ProductUpdate
-from app.core.security import get_current_user
-from fastapi.security import HTTPBearer
-from fastapi.security.http import HTTPAuthorizationCredentials
-from app.core.security import check_admin_role
+from app.core.security import get_current_user, check_admin_role
 
 
 router = APIRouter(tags=["Products"], prefix="/products")
-auth_scheme = HTTPBearer()
 
 
 # Get All Products
@@ -31,31 +27,37 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
 
 
 # Create New Product
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=ProductOut)
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+    response_model=ProductOut,
+    dependencies=[Depends(check_admin_role)])
 def create_product(
         product: ProductCreate,
-        db: Session = Depends(get_db),
-        token: HTTPAuthorizationCredentials = Depends(auth_scheme)):
-    check_admin_role(token, db)
+        db: Session = Depends(get_db)):
     return ProductService.create_product(db, product)
 
 
 # Update Exist Product
-@router.put("/{product_id}", status_code=status.HTTP_200_OK, response_model=ProductOut)
+@router.put(
+    "/{product_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=ProductOut,
+    dependencies=[Depends(check_admin_role)])
 def update_product(
         product_id: int,
         updated_product: ProductUpdate,
-        db: Session = Depends(get_db),
-        token: HTTPAuthorizationCredentials = Depends(auth_scheme)):
-    check_admin_role(token, db)
+        db: Session = Depends(get_db)):
     return ProductService.update_product(db, product_id, updated_product)
 
 
 # Delete Product By ID
-@router.delete("/{product_id}", status_code=status.HTTP_200_OK, response_model=ProductOutDelete)
+@router.delete(
+    "/{product_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=ProductOutDelete,
+    dependencies=[Depends(check_admin_role)])
 def delete_product(
         product_id: int,
-        db: Session = Depends(get_db),
-        token: HTTPAuthorizationCredentials = Depends(auth_scheme)):
-    check_admin_role(token, db)
+        db: Session = Depends(get_db)):
     return ProductService.delete_product(db, product_id)

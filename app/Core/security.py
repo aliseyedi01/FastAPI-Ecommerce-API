@@ -1,3 +1,4 @@
+from fastapi.security.http import HTTPAuthorizationCredentials
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from app.core.config import settings
@@ -6,7 +7,14 @@ from app.schemas.auth import TokenResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException, Depends, status
 from app.models.models import User
+from sqlalchemy.orm import Session
+from fastapi.security import HTTPBearer
+from app.db.database import get_db
+
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+auth_scheme = HTTPBearer()
+
 
 credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                       detail="Invalid access token.", headers={"WWW-Authenticate": "Bearer"})
@@ -68,8 +76,9 @@ def get_current_user(token):
     return user.get('id')
 
 
-
-def check_admin_role(token, db):
+def check_admin_role(
+        token: HTTPAuthorizationCredentials = Depends(auth_scheme),
+        db: Session = Depends(get_db)):
     user = get_token_payload(token.credentials)
     user_id = user.get('id')
     role_user = db.query(User).filter(User.id == user_id).first()
