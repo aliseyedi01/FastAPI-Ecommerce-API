@@ -3,35 +3,31 @@ from app.models.models import Cart, CartItem, Product
 from app.schemas.carts import CartUpdate, CartCreate
 from app.utils.responses import ResponseHandler
 from sqlalchemy.orm import joinedload
+from app.core.security import get_current_user
 
 
 class CartService:
     # Get All Carts
     @staticmethod
-    def get_all_carts(current_user, db: Session, page: int, limit: int):
-        user_id = current_user.get('id')
+    def get_all_carts(token, db: Session, page: int, limit: int):
+        user_id = get_current_user(token)
         carts = db.query(Cart).filter(Cart.user_id == user_id).offset((page - 1) * limit).limit(limit).all()
         message = f"Page {page} with {limit} carts"
         return ResponseHandler.success(message, carts)
 
-    # Get All Cart of User
-    @staticmethod
-    def get_all_user_carts(db: Session, user_id: int):
-        carts = db.query(Cart).filter(Cart.user_id == user_id).all()
-        message = f"All carts for user with ID {user_id}"
-        return ResponseHandler.success(message, carts)
-
     # Get A Cart By ID
     @staticmethod
-    def get_cart(db: Session, cart_id: int):
-        cart = db.query(Cart).filter(Cart.id == cart_id).first()
+    def get_cart(token, db: Session, cart_id: int):
+        user_id = get_current_user(token)
+        cart = db.query(Cart).filter(Cart.id == cart_id, Cart.user_id == user_id).first()
         if not cart:
             ResponseHandler.not_found_error("Cart", cart_id)
         return ResponseHandler.get_single_success("cart", cart_id, cart)
 
     # Create a new Cart
     @staticmethod
-    def create_cart(db: Session, cart: CartCreate):
+    def create_cart(token, db: Session, cart: CartCreate):
+        user_id = get_current_user(token)
         cart_dict = cart.model_dump()
 
         cart_items_data = cart_dict.pop("cart_items", [])
@@ -41,7 +37,7 @@ class CartService:
             product_id = item_data['product_id']
             quantity = item_data['quantity']
 
-            product = db.query(Product).filter(Product.id == product_id).first()
+            product = db.query(Product).filter(Product.id == product_id, Cart.user_id == user_id).first()
             if not product:
                 return ResponseHandler.not_found_error("Product", product_id)
 
@@ -59,8 +55,10 @@ class CartService:
 
     # Update Cart & CartItem
     @staticmethod
-    def update_cart(db: Session, cart_id: int, updated_cart: CartUpdate):
-        cart = db.query(Cart).filter(Cart.id == cart_id).first()
+    def update_cart(token, db: Session, cart_id: int, updated_cart: CartUpdate):
+        user_id = get_current_user(token)
+
+        cart = db.query(Cart).filter(Cart.id == cart_id, Cart.user_id == user_id).first()
         if not cart:
             return ResponseHandler.not_found_error("Cart", cart_id)
 
@@ -93,11 +91,12 @@ class CartService:
 
     # Delete Both Cart and CartItems
     @staticmethod
-    def delete_cart(db: Session, cart_id: int):
+    def delete_cart(token, db: Session, cart_id: int):
+        user_id = get_current_user(token)
         cart = (
             db.query(Cart)
             .options(joinedload(Cart.cart_items).joinedload(CartItem.product))
-            .filter(Cart.id == cart_id)
+            .filter(Cart.id == cart_id, Cart.user_id == user_id)
             .first()
         )
         if not cart:

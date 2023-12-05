@@ -64,4 +64,5 @@ def get_token_payload(token):
 
 
 def get_current_user(token):
-    return get_token_payload(token)
+    user = get_token_payload(token.credentials)
+    return user.get('id')

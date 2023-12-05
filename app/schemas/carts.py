@@ -82,7 +82,6 @@ class CartItemCreate(BaseModel):
 
 
 class CartCreate(BaseModel):
-    user_id: int
     cart_items: List[CartItemCreate]
 
     class Config(BaseConfig):
