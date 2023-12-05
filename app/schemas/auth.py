@@ -4,6 +4,7 @@ from typing import List
 from app.schemas.carts import CartBase
 
 
+# Base
 class BaseConfig:
     from_attributes = True
 
@@ -23,14 +24,7 @@ class UserBase(BaseModel):
         pass
 
 
-class TokenResponse(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str = 'Bearer'
-    expires_in: int
-
-
-class UserCreate(BaseModel):
+class Signup(BaseModel):
     full_name: str
     username: str
     email: str
@@ -46,3 +40,11 @@ class UserOut(BaseModel):
 
     class Config(BaseConfig):
         pass
+
+
+# Token
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = 'Bearer'
+    expires_in: int

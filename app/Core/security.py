@@ -10,17 +10,15 @@ from app.models.models import User
 from sqlalchemy.orm import Session
 from fastapi.security import HTTPBearer
 from app.db.database import get_db
+from app.utils.responses import ResponseHandler
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 auth_scheme = HTTPBearer()
 
-
-credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                                      detail="Invalid access token.", headers={"WWW-Authenticate": "Bearer"})
-
-
 # Create Hash Password
+
+
 def get_password_hash(password):
     return pwd_context.hash(password)
 
@@ -68,7 +66,7 @@ def get_token_payload(token):
     try:
         return jwt.decode(token, settings.secret_key, [settings.algorithm])
     except JWTError:
-        raise credentials_exception
+        raise ResponseHandler.invalid_token('access')
 
 
 def get_current_user(token):
