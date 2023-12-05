@@ -32,7 +32,7 @@ def get_cart(
 
 
 # Create New Cart
-@router.post("/user/", status_code=status.HTTP_201_CREATED, response_model=CartOut, )
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=CartOut)
 def create_cart(
         cart: CartCreate, db: Session = Depends(get_db),
         token: HTTPAuthorizationCredentials = Depends(auth_scheme)):

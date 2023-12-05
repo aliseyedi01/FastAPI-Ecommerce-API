@@ -37,7 +37,7 @@ class CartService:
             product_id = item_data['product_id']
             quantity = item_data['quantity']
 
-            product = db.query(Product).filter(Product.id == product_id, Cart.user_id == user_id).first()
+            product = db.query(Product).filter(Product.id == product_id).first()
             if not product:
                 return ResponseHandler.not_found_error("Product", product_id)
 
@@ -46,8 +46,7 @@ class CartService:
             total_amount += subtotal
 
             cart_items.append(cart_item)
-        cart_db = Cart(cart_items=cart_items, total_amount=total_amount, **cart_dict)
-
+        cart_db = Cart(cart_items=cart_items, user_id=user_id, total_amount=total_amount, **cart_dict)
         db.add(cart_db)
         db.commit()
         db.refresh(cart_db)
