@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 from app.schemas.auth import TokenResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException, Depends, status
-
+from app.models.models import User
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
@@ -66,3 +66,12 @@ def get_token_payload(token):
 def get_current_user(token):
     user = get_token_payload(token.credentials)
     return user.get('id')
+
+
+
+def check_admin_role(token, db):
+    user = get_token_payload(token.credentials)
+    user_id = user.get('id')
+    role_user = db.query(User).filter(User.id == user_id).first()
+    if role_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin role required")
