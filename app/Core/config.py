@@ -2,8 +2,14 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # Supabase Config
-    database_url: str
+    # Supabase URL
+    db_url: str
+    # Database Config
+    db_username: str
+    db_password: str
+    db_hostname: str
+    db_port: str
+    db_name: str
 
     # JWT Config
     secret_key: str
