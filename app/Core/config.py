@@ -2,8 +2,6 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # Supabase URL
-    db_url: str
     # Database Config
     db_username: str
     db_password: str
