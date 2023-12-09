@@ -29,6 +29,10 @@ A simple Ecommerce API built with Fast API Framework
 - **Online Code**
 	- [Github1s](https://github1s.com/aliseyedi01/Ecommerce-Api)
 
+- **Database**
+	- [dbdiagram](https://dbdiagram.io/d/6574832756d8064ca0b3b776)
+
+
 ## Features
 
 - **Product Endpoints:**
@@ -100,6 +104,9 @@ A simple Ecommerce API built with Fast API Framework
 ## Screenshots 
 
 ![image](https://github.com/aliseyedi01/Ecommerce-Api/assets/118107025/d7262b0d-161c-4324-b343-27eeb0ec302a)
+
+
+![image](https://github.com/aliseyedi01/Ecommerce-Api/assets/118107025/0d8bc0bf-0eac-4e96-812d-f3e09783efb0)
 
 ## Installation
 
