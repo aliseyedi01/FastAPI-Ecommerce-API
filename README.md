@@ -7,6 +7,7 @@ A simple Ecommerce API built with Fast API Framework
 
 - [Ecommerce API with Fast API Framework](#ecommerce-api-with-fast-api-framework)
   - [Table of Contents](#table-of-contents)
+  - [Demo](#demo)
   - [Features](#features)
   - [Technologies Used](#technologies-used)
   - [API Endpoints](#api-endpoints)
@@ -16,6 +17,17 @@ A simple Ecommerce API built with Fast API Framework
   - [Contributing](#contributing)
   - [License](#license)
 
+
+## Demo
+
+> **Tip:** The Render.com free plan may experience a short delay (approximately 1 minute) when starting up. Please be patient for the initial access.
+
+- **Render.com**
+	- [Swagger](https://ecommerce-jgao.onrender.com/docs)
+	- [ReDoc](https://ecommerce-jgao.onrender.com/redoc)
+
+- **Online Code**
+	- [Github1s](https://github1s.com/aliseyedi01/Ecommerce-Api)
 
 ## Features
 
