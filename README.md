@@ -20,7 +20,8 @@ A simple Ecommerce API built with Fast API Framework
 
 ## Demo
 
-> **Tip:** The Render.com free plan may experience a short delay (approximately 1 minute) when starting up. Please be patient for the initial access.
+> [!IMPORTANT]
+> The Render.com free plan may experience a short delay (approximately 1 minute) when starting up. Please be patient for the initial access.
 
 - **Render.com**
 	- [Swagger](https://ecommerce-jgao.onrender.com/docs)
