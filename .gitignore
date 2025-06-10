@@ -19,11 +19,11 @@ env
 docs_build
 site_build
 venv
+venv311
 docs.zip
 archive.zip
 # alembic
 alembic/versions/
-.env
 # vim temporary files
 *~
 .*.sw?
