@@ -14,7 +14,6 @@ class UserBase(BaseModel):
     username: str
     email: EmailStr
     full_name: str
-    password: str
     role: str
     is_active: bool
     created_at: datetime
